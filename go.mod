@@ -1,4 +1,4 @@
-module mkra
+module github.com/mockra/mkra
 
 go 1.22.6
 
