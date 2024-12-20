@@ -11,21 +11,33 @@ import (
 func main() {
 	reader := bufio.NewReader(os.Stdin)
 
-	r, _ := git.PlainOpen(".")
-	w, _ := r.Worktree()
+	dir, err := os.Getwd()
+	handleError(err)
 
-	status, _ := w.Status()
+	r, err := git.PlainOpen(dir)
+	handleError(err)
+
+	w, err := r.Worktree()
+	handleError(err)
+
+	status, err := w.Status()
+	handleError(err)
 
 	for path, _ := range status {
 		fmt.Println("Please enter a commit message for the file:", path)
+
 		key, err := reader.ReadString('\n')
-		if err != nil {
-			panic(err)
-		}
+		handleError(err)
 
 		if key != "\n" {
 			w.Add(path)
 			w.Commit(key, &git.CommitOptions{})
 		}
+	}
+}
+
+func handleError(err error) {
+	if err != nil {
+		panic(err)
 	}
 }
